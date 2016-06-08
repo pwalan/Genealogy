@@ -5,11 +5,18 @@
     android:layout_margin="10dp"
     tools:context="com.github.pwalan.genealogy.fragment.MemberFragment">
 
+    <com.github.pwalan.genealogy.myview.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <ListView
         android:id="@+id/mlist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:divider="#ffffff"
         android:dividerHeight="3dp"/>
+
+    </com.github.pwalan.genealogy.myview.RefreshableView>
 
 </FrameLayout>

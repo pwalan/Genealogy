@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.github.pwalan.genealogy.App;
 import com.github.pwalan.genealogy.R;
 import com.github.pwalan.genealogy.ShowMember;
+import com.github.pwalan.genealogy.myview.RefreshableView;
 import com.github.pwalan.genealogy.utils.C;
 
 import org.json.JSONArray;
@@ -31,11 +32,13 @@ import java.util.Map;
 
 public class MemberFragment extends Fragment {
     //获取数据
-    protected static final int GET_DATA=1;
+    protected static final int GET_DATA = 1;
 
     private App app;
     private JSONObject response;
     private JSONArray data;
+
+    RefreshableView refreshableView;
 
     private ListView mlist;
     private ArrayList<Integer> ids;
@@ -46,8 +49,16 @@ public class MemberFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_member, container, false);
 
-        app=(App)getActivity().getApplication();
-        mlist=(ListView)view.findViewById(R.id.mlist);
+        app = (App) getActivity().getApplication();
+        mlist = (ListView) view.findViewById(R.id.mlist);
+        refreshableView = (RefreshableView) view.findViewById(R.id.refreshable_view);
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
+                refreshableView.finishRefreshing();
+            }
+        }, 0);
 
         getData();
 
@@ -57,14 +68,14 @@ public class MemberFragment extends Fragment {
     /**
      * 获取数据
      */
-    public void getData(){
+    public void getData() {
         listItems = new ArrayList<Map<String, String>>();
-        ids=new ArrayList<Integer>();
+        ids = new ArrayList<Integer>();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HashMap map = new HashMap();
-                map.put("uid",app.getUid());
+                map.put("uid", app.getUid());
                 response = C.asyncPost(app.getServer() + "getMemberlist", map);
                 handler.sendEmptyMessage(GET_DATA);
             }
@@ -78,12 +89,12 @@ public class MemberFragment extends Fragment {
                 case GET_DATA:
                     try {
                         data = new JSONArray(response.get("data").toString());
-                        for(int i=0;i<data.length();i++){
+                        for (int i = 0; i < data.length(); i++) {
                             Map<String, String> listItem = new HashMap<String, String>();
-                            JSONObject jo=data.getJSONObject(i);
+                            JSONObject jo = data.getJSONObject(i);
                             ids.add(jo.getInt("id"));
                             listItem.put("name", jo.getString("name"));
-                            listItem.put("age",jo.getString("age"));
+                            listItem.put("age", jo.getString("age"));
                             listItems.add(listItem);
                         }
                         simpleAdapter = new SimpleAdapter(getActivity(), listItems, R.layout.item_member,
@@ -93,10 +104,10 @@ public class MemberFragment extends Fragment {
                         mlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                Toast.makeText(getActivity(),listItems.get(i).get("name").toString(),Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent(getActivity(), ShowMember.class);
-                                intent.putExtra("id",ids.get(i));
-                                startActivityForResult(intent,0);
+                                Toast.makeText(getActivity(), listItems.get(i).get("name").toString(), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getActivity(), ShowMember.class);
+                                intent.putExtra("id", ids.get(i));
+                                startActivityForResult(intent, 0);
                             }
                         });
                     } catch (JSONException e) {
@@ -109,8 +120,7 @@ public class MemberFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode== Activity.RESULT_OK && requestCode == 0)
-        {
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
             getData();
         }
         super.onActivityResult(requestCode, resultCode, data);
