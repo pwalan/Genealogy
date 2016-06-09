@@ -115,6 +115,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                                                      Toast.makeText(MainActivity.this,"要导入请先登录",Toast.LENGTH_SHORT).show();
                                                                  }
                                                                  break;
+                                                             case R.id.publish:
+                                                                 popup.dismiss();
+                                                                 if(app.isLogin()){
+                                                                     Toast.makeText(MainActivity.this,"公开家谱",Toast.LENGTH_SHORT).show();
+                                                                 }else{
+                                                                     Toast.makeText(MainActivity.this,"要公开请先登录",Toast.LENGTH_SHORT).show();
+                                                                 }
+                                                                 break;
                                                              default:
                                                                  break;
                                                          }
