@@ -2,6 +2,8 @@ package com.github.pwalan.genealogy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,14 +20,23 @@ import android.widget.Toast;
 import com.github.pwalan.genealogy.fragment.HomeFragment;
 import com.github.pwalan.genealogy.fragment.MemberFragment;
 import com.github.pwalan.genealogy.fragment.MineFragment;
+import com.github.pwalan.genealogy.utils.C;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
+    //获取数据
+    protected static final int PUBLISH = 1;
 
     private App app;
+    private JSONObject response;
 
     PopupMenu popup = null;
 
@@ -118,7 +129,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                                              case R.id.publish:
                                                                  popup.dismiss();
                                                                  if(app.isLogin()){
-                                                                     Toast.makeText(MainActivity.this,"公开家谱",Toast.LENGTH_SHORT).show();
+                                                                     updatePublish();
                                                                  }else{
                                                                      Toast.makeText(MainActivity.this,"要公开请先登录",Toast.LENGTH_SHORT).show();
                                                                  }
@@ -150,6 +161,43 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         secondLayout.setOnClickListener(MainActivity.this);
         thirdLayout.setOnClickListener(MainActivity.this);
     }
+
+    /**
+     * 更新用户是否公开家谱
+     */
+    private void updatePublish(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HashMap map = new HashMap();
+                map.put("uid", app.getUid());
+                response = C.asyncPost(app.getServer() + "updatePublish", map);
+                handler.sendEmptyMessage(PUBLISH);
+            }
+        }).start();
+    }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case PUBLISH:
+                    try {
+                        String data=response.getString("data");
+                        if(data.equals("publish")){
+                            Toast.makeText(MainActivity.this,"已公开！",Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(MainActivity.this,"已取消公开！",Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onClick(View v) {

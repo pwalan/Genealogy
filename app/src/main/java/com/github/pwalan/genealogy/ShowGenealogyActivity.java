@@ -92,42 +92,6 @@ public class ShowGenealogyActivity extends Activity {
         }
     };
 
-    private void displayMember() {
-        members.get(0).setX(10);
-        members.get(0).setY(50);
-        int x=0;
-        int y=0;
-        for (int i = 1; i < members.size(); i++) {
-
-        }
-        Member member = new Member();
-        for (int i = 1; i < members.size(); i++) {
-            member = members.get(i);
-            for (int j = 0; j < i; j++) {
-                if(members.get(j).getGender().equals("1")){
-                    x=members.get(j).getX();
-                    y=members.get(j).getY();
-                }
-                //如果第i个成员的同伴在前面有了，就可以将其放在同一行
-                if (member.getPartner().equals(members.get(j).getName())) {
-                    member.setX(members.get(j).getX() + 190);
-                    member.setY(members.get(j).getY());
-                    break;
-                }else if(member.getFather().equals(members.get(j).getName())){
-                    //如果第i个成员的父母亲在前面有了，就可以将其放在下一行
-                    member.setX(members.get(j).getX() + 90);
-                    member.setY(members.get(j).getY()+150);
-                    break;
-                }else{
-                    //否则还是放在同一行
-                    member.setX(x+290);
-                    member.setY(y);
-                }
-            }
-        }
-
-    }
-
     class MyView extends View {
         public MyView(Context context) {
             super(context);
@@ -154,59 +118,63 @@ public class ShowGenealogyActivity extends Activity {
             Path path = new Path();
 
             //处理成员信息,先确定成员放置的位置，再画关系线
-            members.get(0).setX(10);
-            members.get(0).setY(50);
-            int x=0;
-            int y=0;
-            Member member=new Member();
-            for (int i = 1; i < members.size(); i++) {
-                member = members.get(i);
-                for (int j = 0; j < i; j++) {
-                    if(members.get(j).getGender().equals("1")){
-                        x=members.get(j).getX();
-                        y=members.get(j).getY();
-                    }
-                    //如果第i个成员的同伴在前面有了，就可以将其放在同一行
-                    if (member.getPartner().equals(members.get(j).getName())) {
-                        member.setX(members.get(j).getX() + 190);
-                        member.setY(members.get(j).getY());
-                        break;  //跳出此次循环
-                    }else if(member.getFather().equals(members.get(j).getName())){
-                        //如果第i个成员的父母亲在前面有了，就可以将其放在下一行
-                        member.setX(members.get(j).getX() + 90);
-                        member.setY(members.get(j).getY() + 150);
-                        break;  //跳出此次循环
-                    }else if(member.getX()==0){
-                        //否则还是放在同一行
-                        member.setX(x+290);
-                        member.setY(y);
+            if (members.size() > 0) {
+                members.get(0).setX(10);
+                members.get(0).setY(50);
+                int x = 0;
+                int y = 0;
+                Member member = new Member();
+                for (int i = 1; i < members.size(); i++) {
+                    member = members.get(i);
+                    for (int j = 0; j < i; j++) {
+                        if (members.get(j).getGender().equals("1")) {
+                            x = members.get(j).getX();
+                            y = members.get(j).getY();
+                        }
+                        //如果第i个成员的同伴在前面有了，就可以将其放在同一行
+                        if (member.getPartner().equals(members.get(j).getName())) {
+                            member.setX(members.get(j).getX() + 190);
+                            member.setY(members.get(j).getY());
+                            break;  //跳出此次循环
+                        } else if (member.getFather().equals(members.get(j).getName())) {
+                            //如果第i个成员的父母亲在前面有了，就可以将其放在下一行
+                            member.setX(members.get(j).getX() + 90);
+                            member.setY(members.get(j).getY() + 150);
+                            break;  //跳出此次循环
+                        } else if (member.getX() == 0) {
+                            //否则还是放在同一行
+                            member.setX(x + 290);
+                            member.setY(y);
+                        }
                     }
                 }
             }
 
             // 绘制字符串
-            for(int i=0;i<members.size();i++){
+            for (int i = 0; i < members.size(); i++) {
                 canvas.drawText(members.get(i).getName(), members.get(i).getX(), members.get(i).getY(), paint);
             }
 
             //绘制关系线
-            for(int i=0;i<members.size();i++){
+            for (int i = 0; i < members.size(); i++) {
                 //伴侣
-                if(members.get(i).getGender().equals("1")){
-                    for(int j=0;j<members.size();j++){
+                if (members.get(i).getGender().equals("1")) {
+                    for (int j = 0; j < members.size(); j++) {
                         if (members.get(i).getPartner().equals(members.get(j).getName())) {
                             path.moveTo(members.get(i).getX() + 80, members.get(i).getY() - 14);
                             path.lineTo(members.get(j).getX() - 10, members.get(j).getY() - 14);
                             canvas.drawPath(path, paint);
+                            break;
                         }
                     }
                 }
                 //父母孩子
-                for(int j=0;j<members.size();j++){
-                    if(members.get(i).getFather().equals(members.get(j).getName())){
+                for (int j = 0; j < members.size(); j++) {
+                    if (members.get(i).getFather().equals(members.get(j).getName())) {
                         path.moveTo(members.get(i).getX() + 30, members.get(i).getY() - 35);
-                        path.lineTo(members.get(i).getX() + 30, members.get(j).getY() - 14);
+                        path.lineTo(members.get(j).getX() + 120, members.get(j).getY() - 14);
                         canvas.drawPath(path, paint);
+                        break;
                     }
                 }
             }
