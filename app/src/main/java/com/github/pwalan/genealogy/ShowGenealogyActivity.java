@@ -119,10 +119,11 @@ public class ShowGenealogyActivity extends Activity {
 
             //处理成员信息,先确定成员放置的位置，再画关系线
             if (members.size() > 0) {
-                members.get(0).setX(10);
+                members.get(0).setX(50);
                 members.get(0).setY(50);
                 int x = 0;
                 int y = 0;
+                int current=1;
                 Member member = new Member();
                 for (int i = 1; i < members.size(); i++) {
                     member = members.get(i);
@@ -131,19 +132,19 @@ public class ShowGenealogyActivity extends Activity {
                             x = members.get(j).getX();
                             y = members.get(j).getY();
                         }
-                        //如果第i个成员的同伴在前面有了，就可以将其放在同一行
+                        //如果第i个成员的伴侣在前面有了，就可以将其放在同一行
                         if (member.getPartner().equals(members.get(j).getName())) {
-                            member.setX(members.get(j).getX() + 190);
+                            member.setX(members.get(j).getX() + 150);
                             member.setY(members.get(j).getY());
                             break;  //跳出此次循环
                         } else if (member.getFather().equals(members.get(j).getName())) {
                             //如果第i个成员的父母亲在前面有了，就可以将其放在下一行
-                            member.setX(members.get(j).getX() + 90);
+                            member.setX(members.get(j).getX() + 80);
                             member.setY(members.get(j).getY() + 150);
                             break;  //跳出此次循环
                         } else if (member.getX() == 0) {
                             //否则还是放在同一行
-                            member.setX(x + 290);
+                            member.setX(x + 250);
                             member.setY(y);
                         }
                     }
@@ -172,7 +173,7 @@ public class ShowGenealogyActivity extends Activity {
                 for (int j = 0; j < members.size(); j++) {
                     if (members.get(i).getFather().equals(members.get(j).getName())) {
                         path.moveTo(members.get(i).getX() + 30, members.get(i).getY() - 35);
-                        path.lineTo(members.get(j).getX() + 120, members.get(j).getY() - 14);
+                        path.lineTo(members.get(j).getX() + 110, members.get(j).getY() - 14);
                         canvas.drawPath(path, paint);
                         break;
                     }

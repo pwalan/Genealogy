@@ -15,15 +15,15 @@ public class Member {
     public Member() {
     }
 
-    public Member(String name, String gender, String partner, String father, String mother,int x,int y) {
+    public Member(String name, String gender, String partner, String father, String mother, int x, int y) {
         super();
         this.name = name;
         this.gender = gender;
         this.partner = partner;
         this.father = father;
         this.mother = mother;
-        this.x=x;
-        this.y=y;
+        this.x = x;
+        this.y = y;
     }
 
     public String getName() {
@@ -66,20 +66,21 @@ public class Member {
         this.mother = mother;
     }
 
-    public int getX(){
+    public int getX() {
         return x;
     }
 
-    public void setX(int x){
-        this.x=x;
+    public void setX(int x) {
+        this.x = x;
     }
 
-    public int getY(){
+    public int getY() {
         return y;
     }
 
-    public void setY(int y){
-        this.y=y;
+    public void setY(int y) {
+        this.y = y;
     }
+
 
 }
